@@ -1,0 +1,40 @@
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+*~
+\#*\#
+.venv/
+*requirements*.txt
+.pytest_cache/
+__pycache__/
+
+# Serverless directories
+.serverless
+node_modules/**
+.idea/
+.coverage
+.dynamodb/
+.scannerwork/
+package-lock.json
+package.json
+target/
+*.pyc
+*.out
+
+# Output generated from terraform runs
+out/
+vars.tf
+terraform/bitz-prod-lambda.zip

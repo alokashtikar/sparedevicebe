@@ -14,50 +14,37 @@ variable "env"  {
 variable "lambda_env_vars" {
   type    = map
   default = {
-    BITZ_ENV = "DEV"
-    BITZ_PLATFORM = "SpareDevice"
-    BITZ_FEATURE = "3"
+    SPAREDEVICE_ENV = "DEV"
+    SPAREDEVICE_PLATFORM = "SpareDevice"
   }
 }
 
 variable "aws_region" {
-  default = "eu-west-2"
+  default = "ap-south-1"
 }
 
 variable "env_name" {
-  default = "BITZ-DEV"
-}
-
-variable "s3_private_bucket_name" {
-  default = "bitz-dev-pii"
+  default = "SpareDevice-DEV"
 }
 
 variable "s3_public_bucket_name"  {
-  default = "bitz-dev-asset-objects"
+  default = "SpareDevice-DEV-asset-objects"
 }
 
-variable "s3_bo_bucket_name"  {
-  default = "bitz-dev-bo"
-}
-
-variable "s3_hni_bucket_name"  {
-  default = "bitz-dev-hni"
+variable "s3_webapp_bucket_name"  {
+  default = "SpareDevice-DEV-bo"
 }
 
 variable "iam_lambda_policy_file"  {
-  default = "./bitz-iam-lambda-policy.json"
+  default = "./SpareDevice-iam-lambda-policy.json"
 }
 
 variable "iam_identity_backoffice_authenticated_policy_file"  {
-  default = "./bitz-iam-cognito-identity-authenticated-policy.json"
+  default = "./SpareDevice-iam-cognito-identity-authenticated-policy.json"
 }
 
 variable "iam_identity_backoffice_unauthenticated_policy_file"  {
-  default = "./bitz-iam-cognito-identity-unauthenticated-policy.json"
-}
-
-variable "yield_disbursement_rule_schedule_expression"  {
-  default = "rate(5 minutes)"
+  default = "./SpareDevice-iam-cognito-identity-unauthenticated-policy.json"
 }
 
 variable "dynamodb_point_in_time_recovery"  {
@@ -69,16 +56,11 @@ variable "lambda_src_dir"  {
 }
 
 variable "lambda_function_package_file"  {
-  default = "./bitz-prod-lambda.zip"
+  default = "./SpareDevice-prod-lambda.zip"
 }
-
 
 variable "cognito_user_pool_investors_domain" {
-  default = "bitz-dev-hni"
-}
-
-variable "cognito_user_pool_backoffice_domain" {
-  default = "bitz-dev-bo"
+  default = "SpareDevice-DEV"
 }
 
 variable "cognito_client_investors_callback" {
@@ -89,30 +71,11 @@ variable "cognito_client_investors_signout" {
   default = "http://localhost:4200"
 }
 
-variable "cognito_client_backoffice_callback" {
-  default = "http://localhost:4201/cognito"
+variable "sparedevice_backoffice_domain" {
+  default = "sparedevice-dev-bo.ec-internal.com"
 }
-
-variable "cognito_client_backoffice_signout" {
-  default = "http://localhost:4201"
-}
-
-variable "bitz_backoffice_domain" {
-  default = "bitz-dev-bo.ec-internal.com"
-}
-variable "bitz_investor_domain" {
-  default = "bitz-dev-hni.ec-internal.com"
-}
-
-variable "bitz_cert"  {
-  default = "./certs/STAR_ec-internal_com.crt"
-}
-variable "bitz_chain"  {
-  default = "./certs/STAR_ec-internal_com.chain"
-}
-
-variable "bitz_key"  {
-  default = "./certs/STAR_ec-internal_com.key"
+variable "sparedevice_investor_domain" {
+  default = "sparedevice-dev-hni.ec-internal.com"
 }
 
 variable "bitz_cert_arn"  {
@@ -194,9 +157,9 @@ resource "random_id" "stage" {
 
 terraform {
     backend "s3" {
-        bucket = "bitz-dev-terraform"
-        key = "bitz-dev"
-        region = "eu-west-2"
+        bucket = "sparedevice-dev-terraform"
+        key = "sparedevice-dev"
+        region = "ap-south-1"
         encrypt = false
     }
     required_providers {
