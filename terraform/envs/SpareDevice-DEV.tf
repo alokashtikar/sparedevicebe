@@ -71,14 +71,14 @@ variable "cognito_client_investors_signout" {
   default = "http://localhost:4200"
 }
 
-variable "sparedevice_backoffice_domain" {
+variable "sparedevice_webapp_domain" {
   default = "sparedevice-dev-bo.ec-internal.com"
 }
 variable "sparedevice_investor_domain" {
   default = "sparedevice-dev-hni.ec-internal.com"
 }
 
-variable "bitz_cert_arn"  {
+variable "sparedevice_cert_arn"  {
   default = "arn:aws:acm:us-east-1:464007601209:certificate/7f01370c-137f-4202-96bd-b03e7ff06e5d"
 }
 
