@@ -36,15 +36,15 @@ variable "s3_webapp_bucket_name"  {
 }
 
 variable "iam_lambda_policy_file"  {
-  default = "./SpareDevice-iam-lambda-policy.json"
+  default = "./iam-lambda-policy.json"
 }
 
 variable "iam_identity_backoffice_authenticated_policy_file"  {
-  default = "./SpareDevice-iam-cognito-identity-authenticated-policy.json"
+  default = "./iam-cognito-identity-authenticated-policy.json"
 }
 
 variable "iam_identity_backoffice_unauthenticated_policy_file"  {
-  default = "./SpareDevice-iam-cognito-identity-unauthenticated-policy.json"
+  default = "./iam-cognito-identity-unauthenticated-policy.json"
 }
 
 variable "dynamodb_point_in_time_recovery"  {
