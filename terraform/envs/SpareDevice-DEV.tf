@@ -76,7 +76,7 @@ variable "sparedevice_webapp_domain" {
 }
 
 variable "sparedevice_cert_arn"  {
-  default = "arn:aws:acm:us-east-1:464007601209:certificate/7f01370c-137f-4202-96bd-b03e7ff06e5d"
+  default = "arn:aws:acm:us-east-1:550043475145:certificate/6ed88948-b993-4b0a-bef1-7ce555f884cb"
 }
 
 
