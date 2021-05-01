@@ -1,0 +1,21 @@
+---
+version: '3.5'
+services:
+  deploy:
+    image: registry.ec-internal.com:5000/ec/aws-ruby-sdk
+    working_dir: /opt/project
+    volumes:
+      - ${WORK_DIR}/api-gw:/opt/project/api-gw
+      - ${WORK_DIR}/assets:/opt/project/assets
+      - ${WORK_DIR}/src:/opt/project/src
+      - ${WORK_DIR}/api-spec:/opt/project/api-spec
+    entrypoint: ruby api-gw/setup.rb
+    container_name: bitz-setup
+    environment:
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      AWS_REGION: $AWS_REGION
+      PATH: $PATH
+      ENV: $ENV
+      COMPANY: $COMPANY
+      CONFIG_FILE: $CONFIG_FILE

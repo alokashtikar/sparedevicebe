@@ -1,0 +1,6 @@
+*
+!*.tf
+!*.json
+!Boto3Latest.zip
+!certs
+!lambda-src

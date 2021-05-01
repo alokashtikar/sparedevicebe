@@ -1,0 +1,47 @@
+version: 0.2
+
+env:
+  secrets-manager:
+    AWS_REGION: credentials/bitz-dev:AWS_REGION
+    AWS_ACCESS_KEY_ID: credentials/bitz-dev:AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: credentials/bitz-dev:AWS_SECRET_ACCESS_KEY
+    DOCKERHUB_PASSWORD: credentials/docker-hub:DOCKERHUB_PASSWORD
+
+phases:
+  install:
+    runtime-versions:
+        docker: 18
+    commands:
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+  pre_build:
+    commands:
+      - echo pre-build
+  build:
+    commands:
+      - echo Build started on `date`
+
+      - export DOCKERHUB_USERNAME=elementalitops
+      - docker login --username=${DOCKERHUB_USERNAME} --password=${DOCKERHUB_PASSWORD}
+      - export PROJECT_DIR=`pwd`
+      - export ENV_VARIABLES_FILE="${PROJECT_DIR}/terraform/envs/${COMPANY}-${ENV}.tf"
+      - . ${PROJECT_DIR}/terraform/scripts/buildspec_common.sh
+      - $execute_terraform init
+      - $execute_terraform apply -auto-approve
+      - export APIGW_WEBACL_ARN=`$execute_terraform output waf_arn`
+      - echo $APIGW_WEBACL_ARN
+
+      - echo Starting API Gateway deployment
+
+      - export DOCKER_COMPOSE="docker-compose"
+      - export COMPOSE_FILE="docker-compose-bitz.yml"
+      - export CONFIG_FILE="api-gw/setup.yml"
+
+      - ${DOCKER_COMPOSE} config
+      - ${DOCKER_COMPOSE} up
+
+      - echo Build completed on `date`
+
+  post_build:
+    commands:
+      - echo Build completed on `date`

@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    network_mode: host
+
+  tests:
+    image: bitz_env
+    container_name: tests
+    working_dir: /opt/project
+    depends_on:
+      - dynamodb-local
+    volumes:
+      - ./src:/opt/project/src
+      - ./test:/opt/project/test
+      - ./build.py:/opt/project/build.py
+      - ./scripts:/opt/project/scripts
+      - ./db-scripts:/opt/project/db-scripts
+    environment:
+      AWS_ACCESS_KEY_ID: 'DUMMY'
+      AWS_SECRET_ACCESS_KEY: 'DUMMY'
+      AWS_DEFAULT_REGION: 'eu-west-2'
+      DYNAMO_DB_HOST: localhost
+      LOCAL_DYNAMO_DB_URL: http://localhost:8000
+      BITZ_ENV: LOCAL
+      BITZ_PLATFORM: BITZ
+      PROJECT_DIR: /opt/project
+      PYTHONPATH: /opt/project/test:/opt/project/src
+    network_mode: host
