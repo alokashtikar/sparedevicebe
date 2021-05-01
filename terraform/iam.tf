@@ -47,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "lambda-attach" {
 
 ###########################################
 
-
+/*
 #########
 # This section caters for ocgnito identity pool
 #
@@ -135,3 +135,4 @@ resource "aws_iam_role_policy_attachment" "backoffice-unauthenticated-identitypo
   role       = "${aws_iam_role.identitypool-backoffice-unauthenticated-role.name}"
   policy_arn = "${aws_iam_policy.identitypool-backoffice-unauthenticated-policy.arn}"
 }
+*/

@@ -1,5 +1,4 @@
 
-
 resource "aws_cloudfront_distribution" "webapp_origin" {
   aliases = ["${var.sparedevice_webapp_domain}"]
   origin {
