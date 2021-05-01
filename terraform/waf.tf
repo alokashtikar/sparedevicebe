@@ -43,14 +43,6 @@ resource "aws_wafv2_web_acl" "cf-web-acl" {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
-
-        excluded_rule {
-              name = "SizeRestrictions_BODY"
-        }
-
-        excluded_rule {
-              name = "GenericRFI_BODY"
-        }
       }
     }
 
@@ -113,14 +105,6 @@ resource "aws_wafv2_web_acl" "api-gw-web-acl" {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
-
-        excluded_rule {
-              name = "SizeRestrictions_BODY"
-        }
-
-        excluded_rule {
-              name = "GenericRFI_BODY"
-        }
       }
     }
 
