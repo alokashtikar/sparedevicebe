@@ -28,11 +28,11 @@ variable "env_name" {
 }
 
 variable "s3_public_bucket_name"  {
-  default = "SpareDevice-DEV-asset-objects"
+  default = "sparedevice-dev-asset-objects"
 }
 
 variable "s3_webapp_bucket_name"  {
-  default = "SpareDevice-DEV-bo"
+  default = "sparedevice-dev-bo"
 }
 
 variable "iam_lambda_policy_file"  {
@@ -60,7 +60,7 @@ variable "lambda_function_package_file"  {
 }
 
 variable "cognito_user_pool_domain" {
-  default = "SpareDevice-DEV"
+  default = "sparedevice-dev"
 }
 
 variable "cognito_client_callback" {
