@@ -1,6 +1,6 @@
 # create cognito user pool
-resource "aws_cognito_user_pool" "investorPool" {
-  name =  "${title(lower(var.company_name))}_${var.env}_Investors"
+resource "aws_cognito_user_pool" "pool" {
+  name =  "${title(lower(var.company_name))}_${var.env}_UserPool"
 
   admin_create_user_config {
     allow_admin_create_user_only = false
@@ -32,13 +32,12 @@ resource "aws_cognito_user_pool" "investorPool" {
     require_uppercase = true
     require_lowercase = true
     require_numbers = true
-    require_symbols = true
   }
 
   verification_message_template  {
-    email_message_by_link = "Thank you for registering with Bitz. To complete the registration process, please verify your email by clicking the following link: {##Click Here##}"
+    email_message_by_link = "Thank you for registering with ${var.company_name_for_notifications}. To complete the registration process, please verify your email by clicking the following link: {##Click Here##}"
     email_subject = "${var.company_name_for_notifications} registration"
-    email_message = "Thank you for registering with Bitz. To complete the registration process, please verify your email by entering the following code in the App: {####}"
+    email_message = "Thank you for registering with ${var.company_name_for_notifications}. To complete the registration process, please verify your email by entering the following code: {####}"
     default_email_option =  "CONFIRM_WITH_CODE"
   }
 
@@ -61,17 +60,6 @@ resource "aws_cognito_user_pool" "investorPool" {
       min_length = "0"
     }
   }
-  schema {
-    name =  "phone_number"
-    attribute_data_type = "String"
-    required =  true
-    developer_only_attribute = false
-    mutable = true
-    string_attribute_constraints {
-      max_length = "2048"
-      min_length = "0"
-    }
-  }
 
   user_pool_add_ons  {
     advanced_security_mode =  "AUDIT"
@@ -79,9 +67,9 @@ resource "aws_cognito_user_pool" "investorPool" {
 }
 
 
-resource "aws_cognito_user_pool_client" "investorClient" {
-  name =  lower("${var.company_name}-Investors")
-  user_pool_id = "${aws_cognito_user_pool.investorPool.id}"
+resource "aws_cognito_user_pool_client" "client" {
+  name =  lower("${var.company_name}-Users")
+  user_pool_id = "${aws_cognito_user_pool.pool.id}"
   generate_secret = false
   supported_identity_providers = ["COGNITO"]
   refresh_token_validity = 30
@@ -89,10 +77,10 @@ resource "aws_cognito_user_pool_client" "investorClient" {
       #"USER_PASSWORD_AUTH"
   #]
   callback_urls = [
-      "${var.cognito_client_investors_callback}"
+      "${var.cognito_client_callback}"
   ]
   logout_urls = [
-      "${var.cognito_client_investors_signout}"
+      "${var.cognito_client_signout}"
   ]
   allowed_oauth_flows = [
       "implicit"
@@ -104,11 +92,11 @@ resource "aws_cognito_user_pool_client" "investorClient" {
 }
 
 
-resource "aws_cognito_user_pool_domain" "investorDomain" {
-  domain       = "${var.cognito_user_pool_investors_domain}"
-  user_pool_id = "${aws_cognito_user_pool.investorPool.id}"
+resource "aws_cognito_user_pool_domain" "domain" {
+  domain       = "${var.cognito_user_pool_domain}"
+  user_pool_id = "${aws_cognito_user_pool.pool.id}"
 }
 
 output "cognito_auth_url_investors" {
-  value = "https://${var.cognito_user_pool_investors_domain}.auth.${var.aws_region}.amazoncognito.com/login?response_type=token&client_id=${aws_cognito_user_pool_client.investorClient.id}&redirect_uri=http://localhost"
+  value = "https://${var.cognito_user_pool_domain}.auth.${var.aws_region}.amazoncognito.com/login?response_type=token&client_id=${aws_cognito_user_pool_client.client.id}&redirect_uri=http://localhost"
 }

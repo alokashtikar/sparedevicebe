@@ -59,23 +59,20 @@ variable "lambda_function_package_file"  {
   default = "./SpareDevice-prod-lambda.zip"
 }
 
-variable "cognito_user_pool_investors_domain" {
+variable "cognito_user_pool_domain" {
   default = "SpareDevice-DEV"
 }
 
-variable "cognito_client_investors_callback" {
+variable "cognito_client_callback" {
   default = "http://localhost:4200/cognito"
 }
 
-variable "cognito_client_investors_signout" {
+variable "cognito_client_signout" {
   default = "http://localhost:4200"
 }
 
 variable "sparedevice_webapp_domain" {
   default = "sparedevice-dev-bo.ec-internal.com"
-}
-variable "sparedevice_investor_domain" {
-  default = "sparedevice-dev-hni.ec-internal.com"
 }
 
 variable "sparedevice_cert_arn"  {
