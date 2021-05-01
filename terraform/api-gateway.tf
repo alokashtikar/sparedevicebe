@@ -4,6 +4,133 @@ resource "aws_api_gateway_rest_api" "api" {
   name        = "${title(lower(var.company_name))} ${var.env} API"
 }
 
+######## Resource open ########
+resource "aws_api_gateway_resource" "open" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+   path_part   = "open"
+}
+
+resource "aws_api_gateway_resource" "open_proxy" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   parent_id   = aws_api_gateway_resource.open_proxy.id
+   path_part   = "{resources+}"
+}
+
+######## Methods ########
+resource "aws_api_gateway_method" "open_proxy" {
+   rest_api_id   = aws_api_gateway_rest_api.api.id
+   resource_id   = aws_api_gateway_resource.open_proxy.id
+   http_method   = "ANY"
+   authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "open_proxy_root" {
+   rest_api_id   = aws_api_gateway_rest_api.api.id
+   resource_id   = aws_api_gateway_rest_api.api.root_resource_id
+   http_method   = "ANY"
+   authorization = "NONE"
+}
+
+######## Integration ########
+resource "aws_api_gateway_integration" "open_lambda" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   resource_id = aws_api_gateway_method.open_proxy.resource_id
+   http_method = aws_api_gateway_method.open_proxy.http_method
+
+   integration_http_method = "POST"
+   type                    = "AWS_PROXY"
+   uri                     = aws_lambda_function.lambda_s3.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "open_lambda_root" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   resource_id = aws_api_gateway_method.open_proxy_root.resource_id
+   http_method = aws_api_gateway_method.open_proxy_root.http_method
+
+   integration_http_method = "POST"
+   type                    = "AWS_PROXY"
+   uri                     = aws_lambda_function.lambda_s3.invoke_arn
+}
+
+######## Deployment ########
+resource "aws_api_gateway_deployment" "open_dep" {
+   depends_on = [
+     aws_api_gateway_integration.open_lambda,
+     aws_api_gateway_integration.open_lambda_root,
+   ]
+
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   stage_name  = "test"
+}
+
+
+######## Resource user ########
+resource "aws_api_gateway_resource" "user" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+   path_part   = "user"
+}
+
+resource "aws_api_gateway_resource" "" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   parent_id   = aws_api_gateway_resource.user.id
+   path_part   = "{resources+}"
+}
+
+######## Methods ########
+resource "aws_api_gateway_method" "user_proxy" {
+   rest_api_id   = aws_api_gateway_rest_api.api.id
+   resource_id   = aws_api_gateway_resource.user_proxy.id
+   http_method   = "ANY"
+   authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "user_proxy_root" {
+   rest_api_id   = aws_api_gateway_rest_api.api.id
+   resource_id   = aws_api_gateway_rest_api.api.root_resource_id
+   http_method   = "ANY"
+   authorization = "NONE"
+}
+
+######## Integration ########
+resource "aws_api_gateway_integration" "user_lambda" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   resource_id = aws_api_gateway_method.user_proxy.resource_id
+   http_method = aws_api_gateway_method.user_proxy.http_method
+
+   integration_http_method = "POST"
+   type                    = "AWS_user_proxy"
+   uri                     = aws_lambda_function.lambda_s3.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "user_lambda_root" {
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   resource_id = aws_api_gateway_method.user_proxy_root.resource_id
+   http_method = aws_api_gateway_method.user_proxy_root.http_method
+
+   integration_http_method = "POST"
+   type                    = "AWS_user_proxy"
+   uri                     = aws_lambda_function.lambda_s3.invoke_arn
+}
+
+######## Deployment ########
+resource "aws_api_gateway_deployment" "user_dep" {
+   depends_on = [
+     aws_api_gateway_integration.user_lambda,
+     aws_api_gateway_integration.user_lambda_root,
+   ]
+
+   rest_api_id = aws_api_gateway_rest_api.api.id
+   stage_name  = "test"
+}
+
+
+
+
+
+
+
 ######## OPTIONS #########
 resource "aws_api_gateway_method" "api_root_OPTIONS" {
    rest_api_id   = aws_api_gateway_rest_api.api.id
@@ -87,4 +214,3 @@ resource "aws_api_gateway_usage_plan_key" "api" {
   key_type      = "API_KEY"
   usage_plan_id = aws_api_gateway_usage_plan.usage_plan.id
 }
-
