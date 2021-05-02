@@ -51,7 +51,7 @@ resource "aws_api_gateway_resource" "user_proxy" {
 
 ######## Auth ########
 resource "aws_api_gateway_authorizer" "auth" {
-  name          = "CognitoUserPoolAuthorizer"
+  name          = ${title(lower(var.company_name))} ${var.env} authorizer"
   type          = "COGNITO_USER_POOLS"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   provider_arns = [ aws_cognito_user_pool.pool.arn ]
