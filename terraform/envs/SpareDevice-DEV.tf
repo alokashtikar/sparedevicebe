@@ -72,7 +72,7 @@ variable "cognito_client_signout" {
 }
 
 variable "sparedevice_webapp_domain" {
-  default = "sparedevice-dev-bo.ec-internal.com"
+  default = "dev.sparedevice.com"
 }
 
 variable "sparedevice_cert_arn"  {

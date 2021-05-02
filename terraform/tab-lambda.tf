@@ -54,7 +54,7 @@ resource "aws_lambda_function" "open" {
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   function_name = "${title(lower(var.company_name))}_${var.env}_open"
   role          = "${aws_iam_role.lambda-role.arn}"
-  handler       = "lib/main.main_handler"
+  handler       = "lib/main.open_handler"
   timeout       = 6
 
   runtime = "python3.7"
@@ -63,4 +63,88 @@ resource "aws_lambda_function" "open" {
   environment {
     variables = "${var.lambda_env_vars}"
   }
+}
+
+####################
+# user
+resource "aws_lambda_function" "user" {
+  memory_size=1792
+  s3_bucket        = aws_s3_bucket.lambda_s3.id
+	s3_key           = aws_s3_bucket_object.v1.id
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  function_name = "${title(lower(var.company_name))}_${var.env}_user"
+  role          = "${aws_iam_role.lambda-role.arn}"
+  handler       = "lib/main.user_handler"
+  timeout       = 6
+
+  runtime = "python3.7"
+  layers = ["${aws_lambda_layer_version.boto3.arn}"]
+
+  environment {
+    variables = "${var.lambda_env_vars}"
+  }
+}
+
+####################
+# open_proxy
+resource "aws_lambda_function" "open_proxy" {
+  memory_size=1792
+  s3_bucket        = aws_s3_bucket.lambda_s3.id
+	s3_key           = aws_s3_bucket_object.v1.id
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  function_name = "${title(lower(var.company_name))}_${var.env}_open_proxy"
+  role          = "${aws_iam_role.lambda-role.arn}"
+  handler       = "lib/main.open_handler"
+  timeout       = 6
+
+  runtime = "python3.7"
+  layers = ["${aws_lambda_layer_version.boto3.arn}"]
+
+  environment {
+    variables = "${var.lambda_env_vars}"
+  }
+}
+
+####################
+# user_proxy
+resource "aws_lambda_function" "user_proxy" {
+  memory_size=1792
+  s3_bucket        = aws_s3_bucket.lambda_s3.id
+	s3_key           = aws_s3_bucket_object.v1.id
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  function_name = "${title(lower(var.company_name))}_${var.env}_user_proxy"
+  role          = "${aws_iam_role.lambda-role.arn}"
+  handler       = "lib/main.user_handler"
+  timeout       = 6
+
+  runtime = "python3.7"
+  layers = ["${aws_lambda_layer_version.boto3.arn}"]
+
+  environment {
+    variables = "${var.lambda_env_vars}"
+  }
+}
+
+
+resource "aws_lambda_permission" "user" {
+  statement_id  = "AllowMyDemoAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "${title(lower(var.company_name))}_${var.env}_user_proxy"
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/*/* part allows invocation from any stage, method and resource path
+  # within API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/*/*/*"
+}
+
+
+resource "aws_lambda_permission" "open" {
+  statement_id  = "AllowMyDemoAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "${title(lower(var.company_name))}_${var.env}_open_proxy"
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/*/* part allows invocation from any stage, method and resource path
+  # within API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/*/*/*"
 }
