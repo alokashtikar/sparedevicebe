@@ -64,7 +64,11 @@ variable "cognito_user_pool_domain" {
 }
 
 variable "cognito_client_callback" {
-  default = "http://localhost:4200/cognito"
+  default = "http://localhost:4200"
+}
+
+variable "ses_arn" {
+  default = "arn:aws:ses:ap-south-1:550043475145:identity/sparedevicenearme@gmail.com"
 }
 
 variable "cognito_client_signout" {

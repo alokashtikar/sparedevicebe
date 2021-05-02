@@ -41,15 +41,11 @@ resource "aws_cognito_user_pool" "pool" {
     default_email_option =  "CONFIRM_WITH_CODE"
   }
 
-  email_configuration {
-    email_sending_account = "DEVELOPER"
-    source_arn = "arn:aws:ses:ap-south-1:550043475145:identity/sparedevicenearme@gmail.com"
-  }
-/*
-  tags  {
-    key_name =  ""
-  }
-*/
+//  email_configuration {
+//    email_sending_account = "DEVELOPER"
+//    source_arn = "${var.ses_arn}"
+//  }
+
   schema {
     name =  "email"
     attribute_data_type = "String"
