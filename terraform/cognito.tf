@@ -42,7 +42,8 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   email_configuration {
-    email_sending_account = "COGNITO_DEFAULT"
+    email_sending_account = "DEVELOPER"
+    source_arn = "arn:aws:ses:ap-south-1:550043475145:identity/sparedevicenearme@gmail.com"
   }
 /*
   tags  {
