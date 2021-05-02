@@ -15,7 +15,7 @@ resource "aws_cognito_user_pool" "pool" {
   auto_verified_attributes = ["email"]
   #alias_attributes = []
 
-  username_attributes = ["email"]
+  // username_attributes = ["email"]
 
   #device_configuration  {
     #challenge_required_on_new_device =  false
@@ -73,22 +73,22 @@ resource "aws_cognito_user_pool_client" "client" {
   generate_secret = false
   supported_identity_providers = ["COGNITO"]
   refresh_token_validity = 30
-  #explicit_auth_flows = [
-      #"USER_PASSWORD_AUTH"
-  #]
+  explicit_auth_flows = [
+      "USER_PASSWORD_AUTH"
+  ]
   callback_urls = [
       "${var.cognito_client_callback}"
   ]
   logout_urls = [
       "${var.cognito_client_signout}"
   ]
-  allowed_oauth_flows = [
-      "implicit"
-  ]
-  allowed_oauth_scopes = [
-      "openid", "email"
-  ]
-  allowed_oauth_flows_user_pool_client= true
+//  allowed_oauth_flows = [
+//      "implicit"
+//  ]
+//  allowed_oauth_scopes = [
+//      "openid", "email"
+//  ]
+//  allowed_oauth_flows_user_pool_client= true
 }
 
 
