@@ -49,12 +49,23 @@ resource "aws_api_gateway_resource" "user_proxy" {
    path_part   = "{resources+}"
 }
 
+######## Auth ########
+resource "aws_api_gateway_authorizer" "auth" {
+  name          = "CognitoUserPoolAuthorizer"
+  type          = "COGNITO_USER_POOLS"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  provider_arns = [ aws_cognito_user_pool.pool.arn ]
+}
+
+
 ######## Methods ########
 resource "aws_api_gateway_method" "user_proxy" {
    rest_api_id   = aws_api_gateway_rest_api.api.id
    resource_id   = aws_api_gateway_resource.user_proxy.id
    http_method   = "ANY"
-   authorization = "NONE"
+   authorization = "COGNITO_USER_POOLS"
+   authorizer_id = aws_api_gateway_authorizer.auth.id
+
 }
 
 ######## Integration ########
