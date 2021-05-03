@@ -27,10 +27,10 @@ def get_dynamo_client():
     return boto3.client('dynamodb', endpoint_url=PLATFORM_DB_ENDPOINT[USE_ENV])
 
 def get_env():
-    return os.getenv("BITZ_ENV", "LOCAL")
+    return os.getenv("SPAREDEVICE_ENV", "LOCAL")
 
 def get_platform():
-    return os.getenv("BITZ_PLATFORM", "BITZ")
+    return os.getenv("SPAREDEVICE_PLATFORM", "SpareDevice")
 
 def get_dynamo_instance():
     """

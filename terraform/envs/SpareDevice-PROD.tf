@@ -8,13 +8,13 @@ variable "company_name_for_notifications" {
 }
 
 variable "env"  {
-  default = "DEV"
+  default = "PROD"
 }
 
 variable "lambda_env_vars" {
   type    = map
   default = {
-    SPAREDEVICE_ENV = "DEV"
+    SPAREDEVICE_ENV = "PROD"
     SPAREDEVICE_PLATFORM = "Sparedevice"
   }
 }
@@ -24,15 +24,15 @@ variable "aws_region" {
 }
 
 variable "env_name" {
-  default = "SpareDevice-DEV"
+  default = "SpareDevice-PROD"
 }
 
 variable "s3_public_bucket_name"  {
-  default = "sparedevice-dev-asset-objects"
+  default = "sparedevice-prod-asset-objects"
 }
 
 variable "s3_webapp_bucket_name"  {
-  default = "sparedevice-dev-bo"
+  default = "sparedevice-prod-bo"
 }
 
 variable "iam_lambda_policy_file"  {
@@ -60,11 +60,11 @@ variable "lambda_function_package_file"  {
 }
 
 variable "cognito_user_pool_domain" {
-  default = "sparedevice-dev"
+  default = "sparedevice-prod"
 }
 
 variable "cognito_client_callback" {
-  default = "http://localhost:4200"
+  default = "https://prod.sparedevice.com"
 }
 
 variable "ses_arn" {
@@ -72,11 +72,11 @@ variable "ses_arn" {
 }
 
 variable "cognito_client_signout" {
-  default = "http://localhost:4200"
+  default = "https://www.sparedevice.com"
 }
 
 variable "sparedevice_webapp_domain" {
-  default = "dev.sparedevice.com"
+  default = "prod.sparedevice.com"
 }
 
 variable "sparedevice_cert_arn"  {
@@ -158,8 +158,8 @@ resource "random_id" "stage" {
 
 terraform {
     backend "s3" {
-        bucket = "sparedevice-dev-terraform"
-        key = "sparedevice-dev"
+        bucket = "sparedevice-prod-terraform"
+        key = "sparedevice-prod"
         region = "ap-south-1"
         encrypt = false
     }
