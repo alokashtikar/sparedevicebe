@@ -14,6 +14,8 @@ from lib.utils.datetime import now
 from lib.utils.common import required, convert_to_dynamo_compatible, require_valid_values
 from lib.utils.table_access_utils import scan_table, get_item
 
+import traceback
+import sys
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -56,8 +58,6 @@ def get_all_items(event, context):
         final_results = user_results + other_results
 
     except ClientError as e:
-        import traceback
-        import sys
         traceback.print_tb(sys.exc_info()[2], limit=5)
         log.error(sys.exc_info())
         raise e(sys.exc_info())
@@ -117,8 +117,6 @@ def create_item(event, context):
         query_response = table.put_item(Item=item)
         log.info(json.dumps(query_response))
     except (KeyError, ClientError) as e:
-        import traceback
-        import sys
         traceback.print_tb(sys.exc_info()[2], limit=5)
         log.error(sys.exc_info())
         raise e(sys.exc_info())
@@ -137,13 +135,27 @@ def get_user_items(event, context):
         response = scan_table(TableNames.LISTING_TABLE, filter_exp)
         log.info(response)
     except (KeyError, ClientError) as e:
-        import traceback
-        import sys
         traceback.print_tb(sys.exc_info()[2], limit=5)
         log.error(sys.exc_info())
         raise e(sys.exc_info())
     else:
         response = generate_success_response(response)
+        log.info(response)
+        return response
+
+
+def delete_user_item(event, context):
+    try:
+        item_id = event['queryStringParameters']['id']
+        table = get_dynamo_table(TableNames.LISTING_TABLE)
+        query_response = table.delete_item(Key={'id': item_id})
+        log.info(query_response)
+    except (KeyError, ClientError) as e:
+        traceback.print_tb(sys.exc_info()[2], limit=5)
+        log.error(sys.exc_info())
+        raise e(sys.exc_info())
+    else:
+        response = generate_success_response(item_id)
         log.info(response)
         return response
 
@@ -156,8 +168,8 @@ def user_handler(event, context):
             return create_item(event, context)
         if event['httpMethod'] == 'GET':
             return get_user_items(event, context)
-        # if event['httpMethod'] == 'DELETE':
-        #     return removeUserItem(event, context)
+        if event['httpMethod'] == 'DELETE':
+            return delete_user_item(event, context)
 
     return generate_success_response(json.dumps({'path': event['path'], 'email': get_email_from_gateway_event(event),
                             'object': event['body']}))
