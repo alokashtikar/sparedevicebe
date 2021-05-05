@@ -64,7 +64,7 @@ variable "cognito_user_pool_domain" {
 }
 
 variable "cognito_client_callback" {
-  default = "https://prod.sparedevice.com"
+  default = "https://www.sparedevice.com"
 }
 
 variable "ses_arn" {
@@ -76,7 +76,7 @@ variable "cognito_client_signout" {
 }
 
 variable "sparedevice_webapp_domain" {
-  default = "prod.sparedevice.com"
+  default = "www.sparedevice.com"
 }
 
 variable "sparedevice_cert_arn"  {

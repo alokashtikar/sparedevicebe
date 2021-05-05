@@ -48,14 +48,17 @@ def get_all_items(event, context):
             results = scan_table(TableNames.LISTING_TABLE, filter_exp)
         else:
             results = scan_table(TableNames.LISTING_TABLE)
-        user_results = []
-        other_results = []
+        # user_results = []
+        # other_results = []
+        final_results = []
         for r in results:
-            if r['userId'] == user_id:
-                user_results.append(r)
-            else:
-                other_results.append(r)
-        final_results = user_results + other_results
+            r['longitude'] = r['latitude'] = Decimal(0)
+            # if r['userId'] == user_id:
+            #     user_results.append(r)
+            # else:
+            #     other_results.append(r)
+            final_results.append(r)
+        # final_results = user_results + other_results
 
     except ClientError as e:
         traceback.print_tb(sys.exc_info()[2], limit=5)
