@@ -28,6 +28,8 @@ def get_all_items(event, context):
     except:
         log.info('Not signed in!')
 
+    latitude = Decimal(0)
+    longitude = Decimal(0)
     query_params = False
     try:
         latitude = Decimal(float(event['queryStringParameters']['latitude']))
@@ -52,6 +54,7 @@ def get_all_items(event, context):
         # other_results = []
         final_results = []
         for r in results:
+            r['proximity'] = (latitude - r['latitude']) ^ 2 + (longitude - r['longitude']) ^ 2
             r['longitude'] = r['latitude'] = Decimal(0)
             # if r['userId'] == user_id:
             #     user_results.append(r)
