@@ -12,7 +12,7 @@ from lib.utils.db_utils import get_dynamo_table, get_resolved_dynamo_table_name
 from lib.utils.server import generate_success_response, generate_failure_response, generate_failure_response_with_message
 from lib.utils.datetime import now
 from lib.utils.common import required, convert_to_dynamo_compatible, require_valid_values
-from lib.utils.table_access_utils import scan_table, get_item
+from lib.utils.table_access_utils import scan_table, get_item, invalidate_record
 
 import traceback
 import sys
@@ -54,7 +54,7 @@ def get_all_items(event, context):
         # other_results = []
         final_results = []
         for r in results:
-            r['proximity'] = (latitude - r['latitude']) ^ 2 + (longitude - r['longitude']) ^ 2
+            r['proximity'] = (latitude - r['latitude']) ** 2 + (longitude - r['longitude']) ** 2
             r['longitude'] = r['latitude'] = Decimal(0)
             # if r['userId'] == user_id:
             #     user_results.append(r)
@@ -96,7 +96,7 @@ def create_item(event, context):
         email = get_email_from_gateway_event(event)
         username = get_username_from_gateway_event(event)
 
-        required(req_data['item'], {'description', 'type', 'option', 'latitude', 'longitude', 'name', 'city'})
+        required(req_data['item'], {'description', 'type', 'latitude', 'longitude', 'name', 'city'})
 
         item = {
             'id': item_unique_id,
@@ -106,7 +106,6 @@ def create_item(event, context):
             'lastUpdatedDateTime': now(),
             'description': req_data['item']['description'],
             'type': req_data['item']['type'],
-            'option': req_data['item']['option'],
             'latitude': req_data['item']['latitude'],
             'longitude': req_data['item']['longitude'],
             'username': username,
@@ -152,16 +151,16 @@ def get_user_items(event, context):
 
 def delete_user_item(event, context):
     try:
-        item_id = event['queryStringParameters']['id']
-        table = get_dynamo_table(TableNames.LISTING_TABLE)
-        query_response = table.delete_item(Key={'id': item_id})
+        key = {'id': event['queryStringParameters']['id']}
+        item = get_item(TableNames.LISTING_TABLE, key)
+        query_response = invalidate_record(TableNames.LISTING_TABLE, key, item['version'], get_user_id_from_gateway_event(event))
         log.info(query_response)
     except (KeyError, ClientError) as e:
         traceback.print_tb(sys.exc_info()[2], limit=5)
         log.error(sys.exc_info())
         raise e(sys.exc_info())
     else:
-        response = generate_success_response(item_id)
+        response = generate_success_response(query_response)
         log.info(response)
         return response
 
