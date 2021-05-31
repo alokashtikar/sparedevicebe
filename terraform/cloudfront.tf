@@ -1,6 +1,6 @@
 
 resource "aws_cloudfront_distribution" "webapp_origin" {
-  aliases = ["${var.sparedevice_webapp_domain}"]
+  aliases = "${var.sparedevice_webapp_domain}"
   origin {
     domain_name = "${aws_s3_bucket.webapp.bucket_regional_domain_name}"
     origin_id   = "${var.s3_webapp_bucket_name}"

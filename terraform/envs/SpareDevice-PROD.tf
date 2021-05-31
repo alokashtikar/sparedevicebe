@@ -76,11 +76,11 @@ variable "cognito_client_signout" {
 }
 
 variable "sparedevice_webapp_domain" {
-  default = "www.sparedevice.com"
+  default = ["www.sparedevice.com", "sparedevice.com"]
 }
 
 variable "sparedevice_cert_arn"  {
-  default = "arn:aws:acm:us-east-1:550043475145:certificate/6ed88948-b993-4b0a-bef1-7ce555f884cb"
+  default = "arn:aws:acm:us-east-1:550043475145:certificate/ea980b51-d87e-4efe-a970-3c1c41f814aa"
 }
 
 
