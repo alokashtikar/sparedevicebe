@@ -22,51 +22,60 @@ log.setLevel(logging.INFO)
 
 
 def get_all_items(event, context):
-    user_id = None
-    try:
-        user_id = get_user_id_from_gateway_event(event)
-    except:
-        log.info('Not signed in!')
-
     latitude = Decimal(0)
     longitude = Decimal(0)
-    query_params = False
+    object_type = None
+    pos_param = False
+    type_param = False
     try:
         latitude = Decimal(float(event['queryStringParameters']['latitude']))
         longitude = Decimal(float(event['queryStringParameters']['longitude']))
-        object_type = event['queryStringParameters']['type']
-        query_params = True
+        pos_param = True
     except:
-        log.info('Bad query params')
+        log.info('No longitude latitude params')
 
     try:
-        if query_params:
+        object_type = event['queryStringParameters']['type']
+        if object_type is not '':
+            type_param = True
+    except:
+        log.info('No type params')
+
+    try:
+        pos_filter_exp = None
+        if pos_param:
             one = Decimal(1.0)
-            filter_exp = Attr('latitude').gt(latitude - one) &\
+            pos_filter_exp = Attr('latitude').gt(latitude - one) &\
                          Attr('latitude').lt(latitude + one) &\
                          Attr('longitude').gt(longitude - one) &\
-                         Attr('longitude').lt(longitude + one) &\
-                         Attr('type').eq(object_type)
+                         Attr('longitude').lt(longitude + one)
+
+        if type_param:
+            type_filter_exp = Attr('type').eq(object_type)
+
+        if pos_param and type_param:
+            filter_exp = pos_filter_exp & type_filter_exp
+        if pos_param and not type_param:
+            filter_exp = pos_filter_exp
+        if not pos_param and type_param:
+            filter_exp = type_filter_exp
+
+        if pos_param or type_param:
             results = scan_table(TableNames.LISTING_TABLE, filter_exp)
         else:
             results = scan_table(TableNames.LISTING_TABLE)
-        # user_results = []
-        # other_results = []
+
         final_results = []
         for r in results:
             r['proximity'] = (latitude - r['latitude']) ** 2 + (longitude - r['longitude']) ** 2
             r['longitude'] = r['latitude'] = Decimal(0)
-            # if r['userId'] == user_id:
-            #     user_results.append(r)
-            # else:
-            #     other_results.append(r)
+            r['username'] = 'xxxxxxxxx@xxxxxx.xxx'
             final_results.append(r)
-        # final_results = user_results + other_results
 
-    except ClientError as e:
-        traceback.print_tb(sys.exc_info()[2], limit=5)
+    except:
+        traceback.print_tb(sys.exc_info()[2], limit=15)
         log.error(sys.exc_info())
-        raise e(sys.exc_info())
+        raise
     else:
         response = generate_success_response(final_results)
         log.info(response)
